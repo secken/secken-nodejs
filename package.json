@@ -1,7 +1,7 @@
 {
-  "name": "nodesdk",
-  "version": "1.0.0",
-  "description": "Secken SDK for Javascript",
+  "name": "secken-api",
+  "version": "0.1.0",
+  "description": "Secken API SDK for Nodejs",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

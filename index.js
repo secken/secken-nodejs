@@ -27,9 +27,9 @@ Secken.prototype.getSignature = function(data, ignore) {
     return SparkMD5.hash(string);
 };
 
-Secken.prototype.getResult = function(event_id, time, defer) {
+Secken.prototype.getResult = function(event_id, time) {
     var time = time || 2000;
-    var D = defer || Q.defer();
+    var defer = Q.defer();
 
     var params = {
         app_id: this.appId,
@@ -61,15 +61,13 @@ Secken.prototype.getResult = function(event_id, time, defer) {
 
     loop();
 
-    return defer;
+    return defer.promise;
 }
 
-Secken.prototype.getQrcode = function(type, success, error, time) {
+Secken.prototype.getQrcode = function(type) {
 
     var url = type == "bind" ? "qrcode_for_binding" : "qrcode_for_auth";
 
-    var error = error || function(){};
-    var _this = this;
     var defer = Q.defer();
     var data = {
         app_id: this.appId,
@@ -85,13 +83,10 @@ Secken.prototype.getQrcode = function(type, success, error, time) {
         var data = JSON.parse(body);
         switch(data.status) {
             case 200:
-                success(data);
-                if(time !== false) {
-                    _this.getResult(data.event_id, (time || 1000), defer);
-                }
+                defer.resolve(data);
                 break;
             default:
-                error(data);
+                defer.reject(data);
         }
 
     });
@@ -99,18 +94,15 @@ Secken.prototype.getQrcode = function(type, success, error, time) {
     return defer.promise;
 };
 
-Secken.prototype.getAuth = function(success, error, time) {
-    return this.getQrcode("auth", success, error, time);
+Secken.prototype.getAuth = function() {
+    return this.getQrcode("auth");
 };
 
-Secken.prototype.getBind = function(success, error, time) {
-    return this.getQrcode("bind", success, error, time);
+Secken.prototype.getBind = function() {
+    return this.getQrcode("bind");
 };
 
-Secken.prototype.realtimeAuth = function(options, success, error, time) {
-
-    var error = error || function(){};
-    var _this = this;
+Secken.prototype.realtimeAuth = function(options) {
     var defer = Q.defer();
 
     var data = {
@@ -132,13 +124,10 @@ Secken.prototype.realtimeAuth = function(options, success, error, time) {
         var data = JSON.parse(body);
         switch(data.status) {
             case 200:
-                success(data);
-                if(time !== false) {
-                    _this.getResult(data.event_id, (time || 1000), defer);
-                }
+                defer.resolve(data);
                 break;
             default:
-                error(data);
+                defer.reject(data);
         }
     });
 
@@ -173,25 +162,65 @@ Secken.prototype.offlineAuth = function(options, success, error) {
     });
 };
 
-/*Secken.prototype.test = function(step1, step2) {
+
+/*var step2function = function(flag) {
+    var defer2 = Q.defer();
+
+    setTimeout(function() {
+        console.log(flag);
+
+        flag ? defer2.resolve() : defer2.reject();
+    }, 1000);
+
+    return defer2.promise;
+}
+
+
+var _Q.defer = _defer
+var _defer = function() {
     var defer = Q.defer();
+    var deferred = new function(){}();
 
-    var resolve = defer.resolve;
+    deferred.promise = new function(){}();
 
-    function _resolve(step2) {
+    deferred.then = function(resolve, reject, notify) {
 
-        var defer2 = Q.defer();
-
-        resolve();
-
-        step2 ? defer2.resolve() : defer2.reject();
-
-        return defer2.promise;
     }
 
-    defer.resolve = _resolve;
+    return deferred;
+}
 
-    step1 ? defer.resolve() : defer.reject();
+Secken.prototype.test = function(step1, step2) {
+    var defer = Q.defer();
+
+    setTimeout(function() {
+        var resolve = defer.resolve;
+        var reject = defer.reject;
+
+        function _resolve(step2) {
+
+            resolve();
+
+            return step2function(step2);
+        }
+
+        function _reject(step2) {
+
+            var defer2 = Q.defer();
+
+            reject();
+
+            defer2.reject();
+
+            return defer2.promise;
+        }
+
+        defer.resolve = _resolve;
+        defer.reject = _reject;
+
+        step1 ? _resolve.call(defer, step2) : _reject.call(defer, step2);
+
+    }, 1000);
 
     return defer.promise;
 }*/
