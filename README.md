@@ -18,8 +18,8 @@ var sk = new Secken({
     appSecret: ""
 });
 ```
-After initialization, Secken-api can help you to complete you project.
-Secken-api's most functions will return a promise used `q`, so you can use the primose funtion to code you project.
+After initialization, Secken-api can help you to develop you project.
+Most of Secken-api's functions will return a promise object which using `q`, then you can use the primose object embed into you project.
 
 ### Get Bind
 ```javascript
@@ -86,8 +86,8 @@ sk.getResult(event_id, time)
 
 });
 ```
-this function will repeat get result, default delay time is `1000` ms, you can pass `time` to set the delay time, and you can use the primose `notify` function to get each response.
-If you pass `false` as the value of time, it will run only once.
+This function will repeat getting result, the default delay time is `1000` ms, you can use parameter `time` to set the delay time, and you can use the primose's `notify` function to get each response.
+If you pass `false` as the value of `time`, it will run only once.
 
 ### Offline Auth
 ```javascript
@@ -103,8 +103,8 @@ sk.realtimeAuth({
 ```
 
 ### Get Signature
-`getSignature(params [,ignore])`, pass a object type value for `params` and a array type value for `ignore`.
-you can use this function to get a signature string of a params object.
+`getSignature(params [,ignore])`, pass an object type value for `params` and an array type value for `ignore`.
+You can use this function to get the signature string of a params object.
 
 ```javascript
 var signature = sk.getSignature(params, ['user_ip', 'username']);
