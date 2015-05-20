@@ -1,9 +1,9 @@
 var Secken = require("./index.js");
 
 var sk = new Secken({
-    appId: "1S4acD4YkjEiifmsm3RDU6ZoYu4JwBeW",
-    appKey: "IBx6IWXd5dSHSYUhPeor",
-    authId: "7ZxkVEQUirXW3rLA2Xzg"
+    appId: " ",
+    appKey: " ",
+    authId: " "
 });
 
 sk.getBind()
@@ -19,26 +19,14 @@ sk.getBind()
 }).then(success, failed, notify);
 
 
-/*sk.realtimeAuth({
+sk.realtimeAuth({
     action_type: "login",
-    uid: "wi4uxoMBhwdy/hBaRRP8Wg==",
+    uid: "  ",
 }).then(function(data) {
     console.log(data);
     return sk.getResult(data.event_id);
 }).then(success, failed, notify);
-*/
 
-/*sk.test(true, false)
-    .then(function(){
-        console.log("step1 success");
-    }, function(){
-        console.log("step1 failed");
-    })
-    .then(function(){
-        console.log("step2 success");
-    }, function(){
-        console.log("step2 failed");
-    });*/
 
 
 function success(data) {
