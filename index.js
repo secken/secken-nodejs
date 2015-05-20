@@ -28,6 +28,7 @@ Secken.prototype.getSignature = function(data, ignore) {
 };
 
 Secken.prototype.getResult = function(event_id, time) {
+    var once = time === false : true ? false;
     var time = time || 2000;
     var defer = Q.defer();
 
@@ -50,7 +51,7 @@ Secken.prototype.getResult = function(event_id, time) {
                     defer.resolve(data);
                     break;
                 case 602:
-                    setTimeout(loop, time);
+                    if(!once) setTimeout(loop, time);
                     defer.notify(data);
                     break;
                 default:
@@ -134,8 +135,8 @@ Secken.prototype.realtimeAuth = function(options) {
     return defer.promise;
 };
 
-Secken.prototype.offlineAuth = function(options, success, error) {
-    var error = error || function() {};
+Secken.prototype.offlineAuth = function(options) {
+    var defer = Q.defer();
 
     var data = {
         app_id: this.appId,
@@ -154,12 +155,14 @@ Secken.prototype.offlineAuth = function(options, success, error) {
 
         switch(data.status) {
             case 200:
-                success(data);
+                defer.resolve(data);
                 break;
             default:
-                error(data);
+                defer.reject(data);
         }
     });
+
+    return defer.promise;
 };
 
 
