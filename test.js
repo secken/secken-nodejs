@@ -3,7 +3,7 @@ var Secken = require("./index.js");
 var sk = new Secken({
     appId: "1S4acD4YkjEiifmsm3RDU6ZoYu4JwBeW",
     appKey: "IBx6IWXd5dSHSYUhPeor",
-    appSecret: "7ZxkVEQUirXW3rLA2Xzg"
+    authId: "7ZxkVEQUirXW3rLA2Xzg"
 });
 
 sk.getBind()

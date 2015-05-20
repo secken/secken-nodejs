@@ -7,7 +7,7 @@ var querystring = require("querystring");
 var Secken = function(options) {
     this.appId = options.appId;
     this.appKey = options.appKey;
-    this.appSecret = options.appSecret;
+    this.authId = options.authId;
 };
 
 Secken.prototype.getSignature = function(data, ignore) {
@@ -165,6 +165,17 @@ Secken.prototype.offlineAuth = function(options) {
     return defer.promise;
 };
 
+Secken.prototype.getAuthPage = function(callback) {
+    var data = {
+        auth_id: this.authId,
+        callback: callback,
+        timestamp: new Date().getTime()
+    };
+
+    data.signature = this.getSignature(data);
+
+    return "https://auth.yangcong.com/v2/auth_page?" + querystring.stringify(data);
+};
 
 /*var step2function = function(flag) {
     var defer2 = Q.defer();

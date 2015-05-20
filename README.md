@@ -21,7 +21,7 @@ var sk = new Secken({
 After initialization, Secken-api can help you to develop you project.
 Most of Secken-api's functions will return a promise object which using `q`, then you can use the primose object embed into you project.
 
-### Get Bind
+### Get Bind Qrcode Image Url
 ```javascript
 sk.getBind()
 .then(function(result) {
@@ -40,7 +40,7 @@ sk.getBind()
 }).then(success, failed, notify);
 ```
 
-### Auth
+### Get Auth Qrcode Image Url
 ```javascript
 sk.getAuth()
 .then(function(result) {
@@ -100,6 +100,11 @@ sk.realtimeAuth({
     // do some things
 
 }, function(data) {});
+```
+
+### Get Auth Page Url
+```javascript
+var url = sk.getAuthPage( " callback url " );
 ```
 
 ### Get Signature
