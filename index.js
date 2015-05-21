@@ -28,7 +28,7 @@ Secken.prototype.getSignature = function(data, ignore) {
 };
 
 Secken.prototype.getResult = function(event_id, time) {
-    var once = time === false : true ? false;
+    var once = time === false ? true : false;
     var time = time || 2000;
     var defer = Q.defer();
 
