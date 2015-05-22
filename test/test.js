@@ -26,7 +26,7 @@ describe("Secken", function() {
         });
     });
 
-    describe("#getBind()", function() {
+    describe("#getBinding()", function() {
         it("should exec without error", function(done) {
             done();
         });
@@ -44,7 +44,7 @@ describe("Secken", function() {
         });
     });
 
-    describe("#getAuthPage()", function() {
+    describe("#authPage()", function() {
         it("should exec without error", function(done) {
             done();
         });

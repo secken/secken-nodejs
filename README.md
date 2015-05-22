@@ -91,7 +91,7 @@ If you pass `false` as the value of `time`, it will run only once.
 
 ### Offline Auth
 ```javascript
-sk.realtimeAuth({
+sk.offlineAuth({
     dynamic_code: " code ",
     uid: " user id ",
 }).then(function(data) {
@@ -104,7 +104,7 @@ sk.realtimeAuth({
 
 ### Get Auth Page Url
 ```javascript
-var url = sk.getAuthPage( " callback url " );
+var url = sk.authPage( " callback url " );
 ```
 
 ### Get Signature

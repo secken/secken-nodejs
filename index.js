@@ -99,7 +99,7 @@ Secken.prototype.getAuth = function() {
     return this.getQrcode("auth");
 };
 
-Secken.prototype.getBind = function() {
+Secken.prototype.getBinding = function() {
     return this.getQrcode("bind");
 };
 
@@ -165,7 +165,7 @@ Secken.prototype.offlineAuth = function(options) {
     return defer.promise;
 };
 
-Secken.prototype.getAuthPage = function(callback) {
+Secken.prototype.authPage = function(callback) {
     var data = {
         auth_id: this.authId,
         callback: callback,

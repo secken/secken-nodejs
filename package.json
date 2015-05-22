@@ -1,6 +1,6 @@
 {
   "name": "secken-api",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Secken API SDK for Nodejs",
   "main": "index.js",
   "scripts": {
