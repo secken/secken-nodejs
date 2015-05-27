@@ -1,7 +1,7 @@
 var Q = require("q");
 var _ = require("lodash");
 var request = require("request");
-var SparkMD5 = require("spark-md5");
+var crypto = require("crypto");
 var querystring = require("querystring");
 
 var Secken = function(options) {
@@ -9,6 +9,10 @@ var Secken = function(options) {
     this.appKey = options.appKey;
     this.authId = options.authId;
 };
+
+Secken.prototype.md5 = function(text) {
+    return crypto.createHash('md5').update(text).digest('hex');
+}
 
 Secken.prototype.getSignature = function(data, ignore) {
     var ignore = ignore || [];
@@ -24,7 +28,7 @@ Secken.prototype.getSignature = function(data, ignore) {
 
     string += this.appKey;
 
-    return SparkMD5.hash(string);
+    return this.md5(string);
 };
 
 Secken.prototype.getResult = function(event_id, time) {

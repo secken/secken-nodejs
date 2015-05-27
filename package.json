@@ -1,12 +1,12 @@
 {
   "name": "secken-api",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "Secken API SDK for Nodejs",
   "main": "index.js",
   "scripts": {
     "test": "mocha"
   },
-  "author": "Secken Inc.",
+  "author": "Secken,Inc.",
   "license": "ISC",
   "repository": {
     "type": "git",
@@ -15,7 +15,6 @@
   "devDependencies": {
     "lodash": "^3.8.0",
     "q": "^1.3.0",
-    "request": "^2.55.0",
-    "spark-md5": "0.0.5"
+    "request": "^2.55.0"
   }
 }
