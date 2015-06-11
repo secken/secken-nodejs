@@ -103,7 +103,7 @@ Secken.prototype.getAuth = function() {
     return this.getQrcode("auth");
 };
 
-Secken.prototype.getBinding = function() {
+Secken.prototype.getBind = function() {
     return this.getQrcode("bind");
 };
 
