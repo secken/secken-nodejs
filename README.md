@@ -23,7 +23,9 @@ Most of Secken-api's functions will return a promise object which using `q`, the
 
 ### Get Bind Qrcode Image Url
 ```javascript
-sk.getBind()
+sk.getBind({
+    callback: "http://www.callback/path"
+})
 .then(function(result) {
     // Success
     var qrcodeURL = result.qrcode_url;
@@ -37,12 +39,15 @@ sk.getBind()
 
     // do some things
 
+    return sk.breakQ();
 }).then(success, failed, notify);
 ```
 
 ### Get Auth Qrcode Image Url
 ```javascript
-sk.getAuth()
+sk.getAuth({
+    callback: "http://www.callback/path"
+})
 .then(function(result) {
     // Success
     var qrcodeURL = result.qrcode_url;
@@ -56,6 +61,7 @@ sk.getAuth()
 
     // do some things
 
+    return sk.breakQ();
 }).then(success, failed, notify);
 ```
 
@@ -70,6 +76,8 @@ sk.realtimeAuth({
     // do some things
 
     return sk.getResult(data.event_id);
+}, function(data) {
+    return sk.breakQ();
 }).then(success, failed, notify);
 ```
 
