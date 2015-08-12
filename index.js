@@ -115,6 +115,7 @@ Secken.prototype.getQrcode = function(type, options) {
         app_id: this.appId,
     };
 
+    if(options.auth_type) params.auth_type = options.auth_type;
     if(options.callback) params.callback = options.callback;
 
     params = this.formatation(params);
