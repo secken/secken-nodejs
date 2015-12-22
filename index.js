@@ -1,83 +1,77 @@
-var Q = require("q");
-var _ = require("lodash");
-var request = require("request");
-var crypto = require("crypto");
-var punycode = require('punycode');
-var querystring = require("querystring");
+"use strict"
 
-var Secken = function(options) {
-    this.appId = options.appId;
-    this.appKey = options.appKey;
-    this.authId = options.authId;
+let Q = require("q");
+let _ = require("lodash");
+let request = require("request");
+let crypto = require("crypto");
+let querystring = require("querystring");
 
-    this.url = options.url || "https://api.yangcong.com/v2/";
-    this.authUrl = options.authUrl || "https://auth.yangcong.com/v2/auth_page";
-};
+class Secken {
+    constructor(options) {
+        this.app_id = options.app_id;
+        this.app_key = options.app_key;
+        this.auth_id = options.auth_id;
 
-Secken.prototype.breakQ = function() {
-    return Q.defer().promise;
-};
+        this.url = options.url || "https://api.yangcong.com/v2/";
+        this.auth_url = options.auth_url || "https://auth.yangcong.com/v2/auth_page";
+    }
 
-Secken.prototype.md5 = function(text) {
-    return crypto.createHash('md5').update(text).digest('hex');
-};
+    breakQ() {
+        return Q.defer().promise;
+    }
 
-Secken.prototype.getSignature = function(data, ignore) {
-    var ignore = ignore || [];
-    ignore = _.union(ignore, ["signature"]);
+    md5(text) {
+        return crypto.createHash('md5').update(text).digest('hex');
+    }
 
-    var keys = _.keys(data);
-    keys = _.sortBy(_.difference(keys, ignore));
+    getSignature(data, ignore) {
+        ignore = ignore || [];
+        ignore = _.union(ignore, ["signature"]);
 
-    var string = "";
-    _.forEach(keys, function(key) {
-        string += key + "=" + data[key];
-    });
+        let keys = _.keys(data);
+        keys = _.sortBy(_.difference(keys, ignore));
 
-    string += this.appKey;
+        let string = "";
+        _.forEach(keys, key => {
+            string += key + "=" + data[key];
+        });
 
-    return this.md5(string);
-};
+        string += this.app_key;
 
-Secken.prototype.formatation = function(data) {
-    return _.transform(data, function(result, v, k) {
-        switch (k) {
-            case 'username':
-                result[k] = encodeURIComponent(v);
-                break;
-            case 'callback':
-                result[k] = encodeURIComponent(v);
-                break;
-            default:
-                result[k] = v;
-        }
-    });
-};
+        return this.md5(string);
+    }
 
-Secken.prototype.getResult = function(event_id, time) {
-    var _self = this;
+    formatation(data) {
+        return _.transform(data, (result, v, k) => {
+            switch (k) {
+                case 'username':
+                    result[k] = encodeURIComponent(v);
+                    break;
+                case 'callback':
+                    result[k] = encodeURIComponent(v);
+                    break;
+                default:
+                    result[k] = v;
+            }
+        });
+    }
 
-    var once = time === false ? true : false;
-    var time = time || 2000;
-    var defer = Q.defer();
+    request(uri, params, method, base_url) {
+        params = this.formatation(params);
+        params.signature = this.getSignature(params);
 
-    var params = {
-        app_id: this.appId,
-        event_id: event_id,
-    };
+        let options = {
+            method: method || "GET",
+            baseUrl: base_url || this.url,
+            uri: uri || "qrcode_for_auth",
+            qs: params || {}
+        };
 
-    params = this.formatation(params);
+        let _self = this;
+        let defer = Q.defer();
 
-    params.signature = this.getSignature(params);
-
-    var loop = function() {
-        request({
-            method: "GET",
-            baseUrl: _self.url,
-            uri: "/event_result",
-            qs: params,
-        }, function(error, response, body) {
-            var data = JSON.parse(body);
+        request(options, (error, response, body) => {
+            let data = JSON.parse(body);
 
             switch(data.status) {
                 case 200:
@@ -87,169 +81,105 @@ Secken.prototype.getResult = function(event_id, time) {
                         defer.reject(data);
                     }
                     break;
-                case 602:
-                    if(!once) setTimeout(loop, time);
-                    defer.notify(data);
-                    break;
                 default:
                     defer.reject(data);
             }
+
         });
-    };
 
-    loop();
+        return defer.promise;
+    }
 
-    return defer.promise;
-};
+    getResult(event_id, time) {
+        let once = time === false ? true : false;
+        time = time || 2000;
 
-Secken.prototype.getQrcode = function(type, options) {
-    var _self = this;
+        let params = {
+            app_id: this.app_id,
+            event_id: event_id,
+        };
 
-    var url = type == "bind" ? "qrcode_for_binding" : "qrcode_for_auth";
+        let _self = this;
+        let defer = Q.defer();
 
-    var options = options || {};
-
-    var defer = Q.defer();
-
-    var params = {
-        app_id: this.appId,
-    };
-
-    if(options.auth_type) params.auth_type = options.auth_type;
-    if(options.callback) params.callback = options.callback;
-
-    params = this.formatation(params);
-
-    params.signature = this.getSignature(params);
-
-    request({
-        method: "GET",
-        baseUrl: _self.url,
-        uri: url,
-        qs: params,
-    }, function(error, response, body) {
-        var data = JSON.parse(body);
-
-        switch(data.status) {
-            case 200:
-                if( data.signature === _self.getSignature(data) ) {
-                    defer.resolve(data);
+        var loop = function() {
+            _self.request("event_result", params).then(data => {
+                defer.resolve(data);
+            }, error => {
+                if(error.status == 602) {
+                    if(!once) setTimeout(loop, time);
+                    defer.notify(error);
                 } else {
-                    defer.reject(data);
+                    defer.reject(error);
                 }
-                break;
-            default:
-                defer.reject(data);
-        }
+            });
+        };
 
-    });
+        loop();
 
-    return defer.promise;
-};
+        return defer.promise;
+    }
 
-Secken.prototype.getAuth = function(options) {
-    return this.getQrcode("auth", options);
-};
+    getQrcode(type, options) {
+        let url = type == "bind" ? "qrcode_for_binding" : "qrcode_for_auth";
 
-Secken.prototype.getBind = function(options) {
-    return this.getQrcode("bind", options);
-};
+        options = options || {};
 
-Secken.prototype.realtimeAuth = function(options) {
-    var _self = this;
+        let params = {
+            app_id: this.app_id,
+        };
 
-    var defer = Q.defer();
+        if(options.auth_type) params.auth_type = options.auth_type;
+        if(options.callback) params.callback = options.callback;
 
-    var params = {
-        action_type: options.action_type,
-        app_id: this.appId,
-        auth_type: options.auth_type,
-        uid: options.uid,
-    };
+        return this.request(url, params);
+    }
 
-    if(options.user_ip) params.user_ip = options.user_ip;
-    if(options.username) params.username = options.username;
-    if(options.callback) params.callback = options.callback;
+    getAuth(options) {
+        return this.getQrcode("auth", options);
+    }
 
-    params = this.formatation(params);
+    getBind(options) {
+        return this.getQrcode("bind", options);
+    }
 
-    params.signature = this.getSignature(params);
+    realtimeAuth(options) {
+        let params = {
+            action_type: options.action_type,
+            app_id: this.app_id,
+            auth_type: options.auth_type,
+            uid: options.uid,
+        };
 
-    request({
-        method: "POST",
-        baseUrl: _self.url,
-        uri: "/realtime_authorization",
-        form: params,
-    }, function(error, response, body) {
-        var data = JSON.parse(body);
+        if(options.user_ip) params.user_ip = options.user_ip;
+        if(options.username) params.username = options.username;
+        if(options.callback) params.callback = options.callback;
 
-        switch(data.status) {
-            case 200:
-                if( data.signature === _self.getSignature(data) ) {
-                    defer.resolve(data);
-                } else {
-                    defer.reject(data);
-                }
-                break;
-            default:
-                defer.reject(data);
-        }
-    });
+        return this.request("realtime_authorization", params, "POST");
+    }
 
-    return defer.promise;
-};
+    offlineAuth(options) {
+        let params = {
+            app_id: this.app_id,
+            dynamic_code: options.dynamic_code,
+            uid: options.uid,
+        };
 
-Secken.prototype.offlineAuth = function(options) {
-    var _self = this;
+        return this.request("offline_authorization", params, "POST");
+    }
 
-    var defer = Q.defer();
+    authPage(callback) {
+        let params = {
+            auth_id: this.auth_id,
+            callback: callback,
+            timestamp: new Date().getTime()
+        };
 
-    var params = {
-        app_id: this.appId,
-        dynamic_code: options.dynamic_code,
-        uid: options.uid,
-    };
+        params = this.formatation(params);
+        params.signature = this.getSignature(params);
 
-    params = this.formatation(params);
-
-    params.signature = this.getSignature(params);
-
-    request({
-        method: "POST",
-        baseUrl: _self.url,
-        uri: "/offline_authorization",
-        form: params,
-    }, function(error, response, body) {
-        var data = JSON.parse(body);
-
-        switch(data.status) {
-            case 200:
-                if( data.signature === _self.getSignature(data) ) {
-                    defer.resolve(data);
-                } else {
-                    defer.reject(data);
-                }
-                break;
-            default:
-                defer.reject(data);
-        }
-    });
-
-    return defer.promise;
-};
-
-Secken.prototype.authPage = function(callback) {
-    var params = {
-        auth_id: this.authId,
-        callback: callback,
-        timestamp: new Date().getTime()
-    };
-
-    params = this.formatation(params);
-
-    params.signature = this.getSignature(params);
-
-    return this.authUrl + "?" + querystring.stringify(params);
-};
+        return this.auth_url + "?" + querystring.stringify(params);
+    }
+}
 
 module.exports = Secken;

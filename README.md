@@ -13,9 +13,9 @@ npm install secken-api
 var Secken = require("secken-api");
 
 var sk = new Secken({
-    appId: "",
-    appKey: "",
-    appSecret: ""
+    app_id: "",
+    app_key: "",
+    auth_id: ""
 });
 ```
 After initialization, Secken-api can help you to develop you project.
@@ -124,6 +124,14 @@ You can use this function to get the signature string of a params object.
 ```javascript
 var signature = sk.getSignature(params, ['user_ip', 'username']);
 ```
+
+## Change log
+
+#### 2.0.4
+* use ES6
+* change init params' key
+* add `request()` function
+* update `request` to 2.67.0
 
 ## Secken Team
 [Secken](https://www.secken.com)

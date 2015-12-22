@@ -1,6 +1,6 @@
 {
   "name": "secken-api",
-  "version": "2.0.3",
+  "version": "2.0.4",
   "description": "Secken API SDK for Nodejs",
   "main": "index.js",
   "scripts": {
@@ -15,6 +15,6 @@
   "dependencies": {
     "lodash": "^3.10.1",
     "q": "^1.4.1",
-    "request": "^2.60.0"
+    "request": "^2.67.0"
   }
 }
