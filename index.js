@@ -102,7 +102,7 @@ class Secken {
         let _self = this;
         let defer = Q.defer();
 
-        var loop = function() {
+        let loop = function() {
             _self.request("event_result", params).then(data => {
                 defer.resolve(data);
             }, error => {
