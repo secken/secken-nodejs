@@ -1,0 +1,4 @@
+language: node_js
+node_js: stable
+env:
+- SECKEN_ID=" " SECKEN_KEY=" " SECKEN_AUTHID=" "

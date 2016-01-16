@@ -1,5 +1,9 @@
 # Secken SDK for Javascript
 
+[![NPM version][npm-image]][npm-url]
+[![Build Status][travis-image]][travis-url]
+[![Downloads][downloads-image]][downloads-url]
+
 ## Install
 ```sh
 npm install secken-api
@@ -135,3 +139,11 @@ var signature = sk.getSignature(params, ['user_ip', 'username']);
 
 ## Secken Team
 [Secken](https://www.secken.com)
+
+
+[npm-image]: https://img.shields.io/npm/v/secken-api.svg?style=flat-square
+[npm-url]: https://npmjs.org/package/secken-api
+[downloads-image]: http://img.shields.io/npm/dm/secken-api.svg?style=flat-square
+[downloads-url]: https://npmjs.org/package/secken-api
+[travis-image]: https://img.shields.io/travis/secken/secken-nodejs.svg?style=flat-square
+[travis-url]: https://travis-ci.org/secken/secken-nodejs

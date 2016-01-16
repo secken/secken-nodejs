@@ -3,9 +3,9 @@ var Secken = require("../index.js");
 
 describe("Secken", function() {
     var sk = new Secken({
-        app_id: " ",
-        app_key: " ",
-        auth_id: " "
+        app_id: process.env.SECKEN_ID,
+        app_key: process.env.SECKEN_KEY,
+        auth_id: process.env.SECKEN_AUTHID
     });
 
     describe("#getSignature()", function() {

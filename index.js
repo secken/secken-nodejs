@@ -1,10 +1,10 @@
 "use strict"
 
-let Q = require("q");
-let _ = require("lodash");
-let request = require("request");
-let crypto = require("crypto");
-let querystring = require("querystring");
+const Q = require("q");
+const _ = require("lodash");
+const request = require("request");
+const crypto = require("crypto");
+const querystring = require("querystring");
 
 class Secken {
     constructor(options) {
