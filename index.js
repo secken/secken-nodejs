@@ -71,6 +71,8 @@ class Secken {
         let defer = Q.defer();
 
         request(options, (error, response, body) => {
+            if(response.statusCode != 200) return defer.reject(body);
+
             let data = JSON.parse(body);
 
             switch(data.status) {
